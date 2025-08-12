@@ -167,6 +167,34 @@ client.on("guildMemberAdd", async (member) => {
   console.log(`🔔 GUILD MEMBER ADD EVENT TRIGGERED for: ${member.user.tag} (${member.user.id})`);
   
   try {
+// --- DM the new member with a purple embed + website button ---
+async function sendWelcomeDM(member) {
+  try {
+    const embed = new Discord.EmbedBuilder()
+      .setColor(0x9b59b6) // nice purple
+      .setTitle('Welcome to SevServices 💜')
+      .setDescription(`Hey **${member.user.username}**, thanks for joining!\n\nIf you need anything, just open a ticket or reply to this DM.`)
+      .setFooter({
+        text: 'SevServices • Click the button below for our website',
+        iconURL: member.client.user.displayAvatarURL(),
+      });
+
+    const row = new Discord.ActionRowBuilder().addComponents(
+      new Discord.ButtonBuilder()
+        .setStyle(Discord.ButtonStyle.Link)
+        .setLabel('Click here for my website')
+        .setURL('https://sevservices.mysellauth.com/')
+    );
+
+    await member.send({ embeds: [embed], components: [row] });
+    console.log(`✅ Sent welcome DM to ${member.user.tag}`);
+  } catch (err) {
+    // User may have DMs closed—don’t crash the bot
+    console.log(`⚠️ Could not DM ${member.user?.tag || member.id}: ${err.message}`);
+  }
+}
+
+    
     // Debug: Check if member object is valid
     if (!member || !member.user) {
       console.error('❌ Invalid member object received');
